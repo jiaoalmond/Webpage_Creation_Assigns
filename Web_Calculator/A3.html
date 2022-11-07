@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<title>A#3</title>
+	<style type="text/css">
+		body{
+			background-color: darkgrey;
+		}
+		.display-back{
+  			position: absolute;
+  			top: 3em; left: 0; bottom: 1em; right: 0;
+			margin: auto;
+			max-width: 710px;
+			/*width: 100%;*/
+			z-index: 1;
+			/*display: inline-block;*/
+
+		}
+		.tab-button li{
+			list-style-type: none;
+			display: inline;
+			color: white;
+			font-size: xx-large;
+			padding-left: 12px;
+			padding-right: 13px;
+			padding-top: 5px;
+			padding-bottom: 5px;
+			margin: auto;
+			margin-right: -4px;
+			
+		}
+		.tab-button li:hover{
+			list-style-type: none;
+			display: inline;
+			color: white;
+			font-size: xx-large;
+			padding-left: 12px;
+			padding-right: 13px;
+			padding-top: 10px;
+			padding-bottom: 5px;
+			margin: auto;
+			margin-right: -4px;
+			transition-duration: 0.5s;
+
+		}
+		#page_content{
+			background-color: red;
+			margin-top:-1px;
+			max-width: 710px;
+			height: 500px;
+		}
+
+		.calculator{
+			position: absolute;
+  			top: 3em; left: 0; bottom: 1em; right: 0;
+			margin: auto;
+			height: 65%;
+			max-width: 60%;
+			z-index: 2;
+
+			/*display: inline-block;*/
+			/*padding: 20px;*/
+			
+		}
+		.display-box{
+			/*background-color: rgba(159, 248, 117, 0.8);*/
+			background-color: rgba(0, 254, 155, 1);
+			box-shadow: inset 0px 0px 20px 10px rgba(0, 0, 0, 0.3);
+			width: 98%;
+			height: 90%;
+			border: none;
+			color: white;
+			letter-spacing: 2px;
+			font-weight: bold;
+			font-size: medium;
+		}
+		#result{
+			text-align: right;
+		}
+		.function-box{
+			background-color: darkslategrey;
+			color: white;
+			width: 95%;
+			height: 70%;
+			font-size: large;
+			border: none;
+			box-shadow:  0px 3px 3px grey;
+			border-radius: 5px;
+		}
+
+		.function-box:hover{
+			background-color: darkslategrey;
+			box-shadow: inset 0 0 10px grey;
+			border-radius: 5px;
+			color: white;
+			width: 98%;
+			height: 80%;
+/*			box-shadow:0 1px 1px grey,
+			0 2px 2px grey,
+			0 4px 4px grey,
+			0 6px 8px grey,
+			0 8px 16px grey;*/
+		}
+		.number-box{
+			background-color:black;
+			color: white;
+			width: 90%;
+			height: 70%;
+			font-size: large;
+			border-radius: 5px;
+			border: none;
+			box-shadow:  0px 3px 3px grey;
+		}
+
+		.number-box:hover{
+			background-color:black;
+			color: white;
+			width: 95%;
+			height: 80%;
+			border-radius: 5px;
+			box-shadow: inset 5px 3px 4px grey;
+		}
+
+		@keyframes shake {
+			0% { transform: translate(1px, 1px) rotate(0deg); }
+			10% { transform: translate(-1px, -2px) rotate(-1deg); }
+			20% { transform: translate(-3px, 0px) rotate(1deg); }
+			30% { transform: translate(3px, 2px) rotate(0deg); }
+			40% { transform: translate(1px, -1px) rotate(1deg); }
+			50% { transform: translate(-1px, 2px) rotate(-1deg); }
+			60% { transform: translate(-3px, 1px) rotate(0deg); }
+			70% { transform: translate(3px, 1px) rotate(-1deg); }
+			80% { transform: translate(-1px, -1px) rotate(1deg); }
+			90% { transform: translate(1px, 2px) rotate(0deg); }
+			100% { transform: translate(1px, -2px) rotate(-1deg); }
+		}
+		.calculator.animate{
+			animation: shake 0.5s;
+			animation-iteration-count: 2s;
+
+		}
+
+
+	</style>
+</head>
+<body>
+	<script type="text/javascript">
+
+		function checkOperation(str){
+			let spChar=/[+\-*\/%=]/;
+			if(spChar.test(str)){
+				return true;
+			}else{
+				return false;
+			}
+		}
+
+		function display(value){
+			// let NGroup= /[0-9]/g;
+  	// 		let OGroup = /[+\-*\/%=]/gi;
+  			// const op='*';
+			let v =document.getElementById("result").value;
+			let l= v.length;
+			const shakeElement2 = document.querySelector(".calculator");
+			if(v== ''){
+				if(value=='/' || value=='*' || value=='-' || value=='+' || value=='%'){
+					document.getElementById("result").value =''; //no display
+				}else{
+					document.getElementById("result").value += value;//display only the numbers
+				}
+			}else if(v!='' && checkOperation(v)==false){
+				document.getElementById("result").value += value;//display only the numbers
+			}else if(v!='' && checkOperation(v)==true && checkOperation(value)==false){
+				document.getElementById("result").value += value;
+			}
+
+
+			if(l >=19){
+				 // shakeElement.classList.add("animate");
+				 shakeElement2.classList.add("animate");
+				 setTimeout(function () {
+				 	shakeElement2.classList.remove("animate");
+				 }, 1000);
+				 setTimeout(function(){
+				 	alert("Sorry no more space for new input");
+				 },1000);
+				 
+				}
+
+			}
+
+
+		function equals(){
+			let v =document.getElementById("result").value;
+			var mathResult=eval(v);
+			var resultRound=Math.round(mathResult*100)/100;
+			document.getElementById("result").value = resultRound;
+		}
+
+		function shakePage(){
+			let v = document.getElementById("result").value;
+			let l= v.length;
+			// const shakeElement = document.querySelector("body");
+			const shakeElement2 = document.querySelector(".calculator");
+			if(l >=5){
+				 // shakeElement.classList.add("animate");
+				 shakeElement2.classList.add("animate");
+				 setTimeout(function () {
+				 	shakeElement2.classList.remove("animate");
+				 }, 1000);
+
+			}
+
+		}
+
+		function clearNum(){
+			document.getElementById("result").value ="";
+		}
+
+		function dot(){
+			let v =document.getElementById("result").value;
+			if(v == ''){
+				document.getElementById("result").value = "0.";
+			}else if(v.includes('.')==true){
+				document.getElementById("result").value = value;
+			}else if(v != ''){
+				document.getElementById("result").value += ".";
+			}
+		}
+
+		function change_tab(id){
+			document.getElementById("red").onclick = function () {
+            document.getElementById("page_content").style.backgroundColor = 'red';}
+
+            document.getElementById("orange").onclick = function () {
+            document.getElementById("page_content").style.backgroundColor = 'orange';}
+
+            document.getElementById("yellow").onclick = function () {
+            document.getElementById("page_content").style.backgroundColor = 'yellow';}
+
+            document.getElementById("green").onclick = function () {
+            document.getElementById("page_content").style.backgroundColor = 'green';}
+
+            document.getElementById("blue").onclick = function () {
+            document.getElementById("page_content").style.backgroundColor = 'blue';}
+
+            document.getElementById("indigo").onclick = function () {
+            document.getElementById("page_content").style.backgroundColor = 'indigo';}
+
+            document.getElementById("violet").onclick = function () {
+            document.getElementById("page_content").style.backgroundColor = 'violet';}
+		}
+
+
+	</script>
+
+	<input type="button" name="showLength" onclick="shakePage()">
+
+	<div class="display-back">
+		<div class="tab-button" >
+			<li class="red" id="red" onclick="change_tab(this.id)" style="background-color: red;">Red</li>
+			<li class="orange" id="orange" onclick="change_tab(this.id)" style="background-color: orange;">Orange</li>
+			<li class="yellow" id="yellow" onclick="change_tab(this.id)" style="background-color: yellow;">Yellow</li>
+			<li class="green" id="green" onclick="change_tab(this.id)" style="background-color: green;">Green</li>
+			<li class="blue" id="blue" onclick="change_tab(this.id)" style="background-color: blue;">Blue</li>
+			<li class="indigo" id="indigo" onclick="change_tab(this.id)" style="background-color: indigo;">Indigo</li>
+			<li class="violet" id="violet" onclick="change_tab(this.id)" style="background-color: violet;">Violet</li>
+		</div>
+
+		<div id="page_content"></div>
+	</div>
+
+
+	<table class="calculator">
+		<tr>
+			<td colspan="4"><input class="display-box" type="text" id="result"></td>
+		</tr>
+
+		<tr>
+			<td colspan="3"><input class="function-box" type="button" value="Clear" onclick="clearNum()"></td>
+			<td><input class="function-box" type="button" value="/" onclick="display('/')"></td>
+		</tr>
+
+		<tr>
+			<td><input class="number-box" type="button" value="7" onclick="display('7')"></td>
+			<td><input class="number-box" type="button" value="8" onclick="display('8')"></td>
+			<td><input class="number-box" type="button" value="9" onclick="display('9')"></td>
+			<td><input class="function-box" type="button" value="x" onclick="display('*')"></td>
+		</tr>
+
+		<tr>
+			<td><input class="number-box" type="button" value="4" onclick="display('4')"></td>
+			<td><input class="number-box" type="button" value="5" onclick="display('5')"></td>
+			<td><input class="number-box" type="button" value="6" onclick="display('6')"></td>
+			<td><input class="function-box" type="button" value="-" onclick="display('-')"></td>
+		</tr>
+
+		<tr>
+			<td><input class="number-box" type="button" value="1" onclick="display('1')"></td>
+			<td><input class="number-box" type="button" value="2" onclick="display('2')"></td>
+			<td><input class="number-box" type="button" value="3" onclick="display('3')"></td>
+			<td><input class="function-box" type="button" value="+" onclick="display('+')"></td>
+		</tr>
+
+		<tr>
+			<td><input class="number-box" type="button" value="0" onclick="display('0')"></td>
+			<td><input class="number-box" type="button" value="." onclick="dot()"></td>
+			<td><input class="number-box" type="button" value="=" onclick="equals()"></td>
+			<td><input class="function-box" type="button" value="%" onclick="display('%')"></td>
+		</tr>
+	</table>
+
+</body>
+</html>
