@@ -1,0 +1,218 @@
+<!doctype html>
+  <html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Assignment4</title>
+    <link rel="canonical" href="https://getbootstrap.com/docs/5.0/examples/album/">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+    <style type="text/css">
+      #search_bar{
+        margin-top: 50px;
+        margin-bottom: -100px;
+        z-index: 1;
+        position: relative;
+      }
+      #header{
+        font-family: Verdana;
+      }
+      #bookHeader{
+        z-index: 0;
+      }
+
+      .fade-in-image {
+        animation: fadeIn 10s;
+        -webkit-animation: fadeIn 10s;
+        -moz-animation: fadeIn 10s;
+        -o-animation: fadeIn 10s;
+        -ms-animation: fadeIn 10s;
+      }
+      @keyframes fadeIn {
+        0% {opacity:0;}
+        100% {opacity:1;}
+      }
+
+      @-moz-keyframes fadeIn {
+        0% {opacity:0;}
+        100% {opacity:1;}
+      }
+
+      @-webkit-keyframes fadeIn {
+        0% {opacity:0;}
+        100% {opacity:1;}
+      }
+
+      @-o-keyframes fadeIn {
+        0% {opacity:0;}
+        100% {opacity:1;}
+      }
+
+      @-ms-keyframes fadeIn {
+        0% {opacity:0;}
+        100% {opacity:1;}
+      }
+
+      .card-body p{
+        font-style: italic ;
+        text-align: justify;
+        font-family: Verdana;
+        /*font-weight: bold;*/
+      }
+
+      .card-body h3{
+        font-family: Verdana;
+        font-weight: bold;
+      }
+
+
+/*    #subEff{
+      text-align: justify;
+      display: inline;
+    }*/
+
+    #linkEff {
+      text-decoration: none;
+    }
+
+    #subEff:hover {
+     /* transform: scale(1.5); */
+     color: #962626;
+   }
+
+
+ </style>
+
+
+
+ <script type="text/javascript">
+  // create a list, and show the dynamic books
+
+
+
+  function init(){
+    document.getElementById("search_btn").addEventListener("click", testJSON);
+  }
+
+  var bookList= new Array();
+  async function testJSON(){
+    let query=document.querySelector("#search_input").value;
+    if(query==''){
+     alert("Can't find any books, please enter valid search");
+   }
+   fetch('https://reststop.randomhouse.com/resources/works/?start=0&max=100&expandLevel=1&search='+ query, {
+    method: "GET",
+    headers: {
+      'Accept': 'application/json',
+    }
+  })
+   .then(response => response.json())
+   .then(function (json) {
+    console.log(json);
+
+    bookList=[];
+    for(let i=0; i<100;i++){
+      if(Array.isArray(json.work[i].titles.isbn)){
+        bookList.push(json.work[i].titles.isbn[0].$)
+      }else{
+              // console.log("good")
+              bookList.push(json.work[i].titles.isbn.$)
+            }
+          }
+          console.log(bookList);
+          searchList(bookList);
+
+        })
+   .catch(error => console.log(console.error()))
+
+   
+ }
+
+
+
+ function searchList(bookList){
+  var results = document.querySelector('#results2');
+  results.innerHTML=""
+  for (let i = 0; i < bookList.length; i++) {
+    const div=document.createElement("div");
+    fetch('https://openlibrary.org/api/books?jscmd=data&format=json&bibkeys=ISBN:'+ bookList[i],{
+      method:"GET",
+    // header:{"Content-type":"application/json"}
+  }).then(response => response.json())
+    .then(function(json){
+      let colOne= 'ISBN:'+bookList[i];
+      const cover = json[colOne].cover.large
+      const title= json[colOne].title
+      const author = json[colOne].authors[0].name
+      const publishers=json[colOne].publishers[0].name
+      const coverPreview_url=json[colOne].ebooks[0].preview_url
+
+      var subjectList=new Array();
+      const subLen=json[colOne].subjects.length;
+
+      var subComb= new Array();
+      for(let j=0; j<subLen;j++){
+        subComb.push('<a id="linkEff" href="'+json[colOne].subjects[j].url+'"target="_blank">'+'<p id="subEff" style="display:inline">' +json[colOne].subjects[j].name+'</p>'+'</a>')
+      }
+
+      
+      div.innerHTML='<div class="col">'+
+      '<div class="card shadow-sm fade-in-image">'+
+      '<a href="'+coverPreview_url+'" target="_blank">'
+      +'<img class="card-img-top" src="'+ cover +'" alt="..."> '+'</a>'+
+      '<div class="card-body">'+
+      '<h3 class="card-text">'+ title +'</h5>'+
+      '<p class="card-text">Authors: '+ author +'</p>'+
+      '<p class="card-text">Publishers: '+ publishers +'</p>'+
+      '<p class="card-text" style="display:inline">Subjects: '+ subComb +'</p>'+
+      '</div>'+'</div>'+'</div>'
+      results.appendChild(div) 
+
+    }).catch(err => console.log(err))
+
+  }
+
+}
+
+
+
+</script>
+</head>
+<body onload="init()">
+  <main>
+
+    <div
+    class="bg-image img-fluid p-5 text-center shadow-1-strong rounded text-white "
+    style="background-image: url('bookbanner.jpg'); height: auto;">
+    <h1 id="header" class="mb-3 display-3">Search for Books</h1>
+    <p id="header" class="h6">This is my book search engine</p>
+    <section class="container bg-white py-3 " id="search_bar">
+      <div class="col-lg-20 mx-auto p-3">
+        <div class="input-group container gap-2">
+          <input id="search_input" type="search" class="form-control rounded " placeholder="Search for books" aria-label="Search" aria-describedby="search-addon" />
+          <button id="search_btn" type="button" class="btn btn-primary rounded">SEARCH</button>
+        </div>
+      </div>
+    </section>
+
+  </div>
+
+  <div id="bookHeader" class="album py-5 bg-light">
+    <div class="container">
+      <h2 id="header" class="text-center mb-5 mt-5">Book List</h2>
+      <div id="results2" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-3">
+
+      </div>
+    </div>
+  </div>
+
+
+
+</main>
+
+<footer class="py-4" style="background-color:rgba(0, 0, 0, 0.9); color:white;">
+  <div class="container" >
+    <p class="mb-1" >Copyright &copy CCCS310 A4</p>
+  </div>
+</footer>
+</body>
+</html>
